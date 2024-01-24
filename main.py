@@ -68,6 +68,8 @@ class Zombie(pygame.sprite.Sprite):
 
 
 all_sprites = pygame.sprite.Group()
+zombie = Zombie(360, 220)
+all_sprites.add(zombie)
 
 # game loop
 running = True
@@ -86,9 +88,6 @@ while running:
         mouse_pos = pygame.mouse.get_pos()
         hammer_rect.center = (mouse_pos[0], mouse_pos[1])
     # if pygame.time.get_ticks() % 1500 == 0:
-    
-    zombie = Zombie(335, 220)
-    all_sprites.add(zombie)
 
     screen.blit(background_image, (0, 0))
     screen.blit(hammer_img, hammer_rect)
