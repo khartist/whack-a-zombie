@@ -28,8 +28,19 @@ screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 pygame.display.set_caption("Zombie Smash")
 clock = pygame.time.Clock()
 
+mouse_pos = (0, 0)
+pygame.mouse.set_visible(False)
+
 background_image = pygame.image.load("img/bg.png").convert_alpha()
 background_image = pygame.transform.scale(background_image, [SCREEN_WIDTH, SCREEN_HEIGHT])
+
+hammer = []
+for i in range(1, 3):
+    img = pygame.image.load("img/hammer{}.png".format(i))
+    img = pygame.transform.scale_by(img, 0.5)
+    hammer.append(img)
+hammer_img = hammer[0]
+hammer_rect = hammer_img.get_rect()    
 
 
 class Zombie(pygame.sprite.Sprite):
@@ -39,7 +50,7 @@ class Zombie(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
         self.image = pygame.image.load('img/zombie.png').convert_alpha()
-        self.image = pygame.transform.scale_by(self.image, 0.2)
+        self.image = pygame.transform.scale_by(self.image, 0.3)
         self.rect = self.image.get_rect()
 
         self.rect.x = x
@@ -65,12 +76,23 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
+        if event.type == MOUSEBUTTONDOWN:
+            if event.button == 1:
+                hammer_img = hammer[1]
+        if event.type == MOUSEBUTTONUP:
+            if event.button == 1:
+                hammer_img = hammer[0]
+            
+        mouse_pos = pygame.mouse.get_pos()
+        hammer_rect.center = (mouse_pos[0], mouse_pos[1])
     # if pygame.time.get_ticks() % 1500 == 0:
-    zombie = Zombie(360, 220)
+    
+    zombie = Zombie(335, 220)
     all_sprites.add(zombie)
 
     screen.blit(background_image, (0, 0))
+    screen.blit(hammer_img, hammer_rect)
+    
     all_sprites.update()
     all_sprites.draw(screen)
     pygame.display.flip()
