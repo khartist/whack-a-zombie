@@ -44,35 +44,60 @@ hammer_rect = hammer_img.get_rect()
 
 
 class Zombie(pygame.sprite.Sprite):
-    ZOMBIE_HEIGHT = 50
-    ZOMBIE_WIDTH = 50
-
+    init_x = 0
+    init_y = 0
     def __init__(self, x, y):
         super().__init__()
         self.image = pygame.image.load('img/zombie.png').convert_alpha()
-        self.image = pygame.transform.scale_by(self.image, 0.3)
+        self.image = pygame.transform.scale_by(self.image, 0.25)
         self.rect = self.image.get_rect()
 
         self.rect.x = x
         self.rect.y = y
+        self.init_x = x
+        self.init_y = y
 
-        self.creation_time = pygame.time.get_ticks()
+        self.appear_time = random.randint(1000, 5000)  # milliseconds (2 seconds)
+        self.disappear_time = random.randint(1000, 2000)
+        self.last_appear_time = pygame.time.get_ticks()
 
     def update(self):
         current_time = pygame.time.get_ticks()
-        if current_time - self.creation_time > 1500:
-            all_sprites.remove()
-
-    def draw(self, screen):
-        screen.blit(self.image, [self.x, self.y])
+        if current_time - self.last_appear_time > self.appear_time:
+            # Make sprite disappear
+            self.rect.x = -1000  # Move sprite off-screen
+            if current_time - self.last_appear_time > self.appear_time + self.disappear_time:
+                # Reset sprite position after disappear_time
+                self.rect.x = self.init_x
+                self.rect.y = self.init_y
+                self.last_appear_time = current_time
+        else:
+            # Make sprite appear
+            self.rect.x = self.rect.x  # Reset sprite position
 
 
 all_sprites = pygame.sprite.Group()
-zombie = Zombie(360, 220)
-all_sprites.add(zombie)
+zombie1 = Zombie(350, 210)
+zombie2 = Zombie(490, 300)
+zombie3 = Zombie(550, 420)
+zombie4 = Zombie(265, 340)
+zombie5 = Zombie(360, 500)
+zombie6 = Zombie(175, 480)
+zombie7 = Zombie(550, 600)
+zombie8 = Zombie(240, 625)
 
+all_sprites.add(zombie1)
+all_sprites.add(zombie2)
+all_sprites.add(zombie3)
+all_sprites.add(zombie4)
+all_sprites.add(zombie5)
+all_sprites.add(zombie6)
+all_sprites.add(zombie7)
+all_sprites.add(zombie8)
 # game loop
 running = True
+clock = pygame.time.Clock()
+
 while running:
     # quit event
     for event in pygame.event.get():
@@ -93,6 +118,9 @@ while running:
     screen.blit(hammer_img, hammer_rect)
     
     all_sprites.update()
+
+
     all_sprites.draw(screen)
     pygame.display.flip()
+    clock.tick(60)
 pygame.quit()
