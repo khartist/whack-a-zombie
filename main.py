@@ -20,6 +20,7 @@ GREEN = (0, 255, 0)
 
 COL = 4
 ROW = 4
+FONT_SIZE = 30
 
 hit = 0
 miss = 0
@@ -30,6 +31,8 @@ clock = pygame.time.Clock()
 
 mouse_pos = (0, 0)
 pygame.mouse.set_visible(False)
+font = pygame.font.Font(None, FONT_SIZE)
+
 
 background_image = pygame.image.load("img/bg.png").convert_alpha()
 background_image = pygame.transform.scale(background_image, [SCREEN_WIDTH, SCREEN_HEIGHT])
@@ -41,6 +44,7 @@ for i in range(1, 3):
     hammer.append(img)
 hammer_img = hammer[0]
 hammer_rect = hammer_img.get_rect()    
+
 
 
 class Zombie(pygame.sprite.Sprite):
@@ -57,10 +61,16 @@ class Zombie(pygame.sprite.Sprite):
         self.init_x = x
         self.init_y = y
 
-        self.appear_time = random.randint(1000, 5000)  # milliseconds (2 seconds)
-        self.disappear_time = random.randint(1000, 2000)
+        self.appear_time = random.randint(1000, 4000)
+        self.disappear_time = random.randint(1000, 4000)
         self.last_appear_time = pygame.time.get_ticks()
 
+
+    def get_clicked(self):
+        self.rect.x = -1000
+        current_time = pygame.time.get_ticks()
+        self.last_appear_time = current_time
+        self.disappear_time = random.randint(1000, 1500)
     def update(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_appear_time > self.appear_time:
@@ -71,9 +81,9 @@ class Zombie(pygame.sprite.Sprite):
                 self.rect.x = self.init_x
                 self.rect.y = self.init_y
                 self.last_appear_time = current_time
-        else:
+        '''else:
             # Make sprite appear
-            self.rect.x = self.rect.x  # Reset sprite position
+            self.rect.x = self.init_x  # Reset sprite position'''
 
 
 all_sprites = pygame.sprite.Group()
@@ -98,6 +108,7 @@ all_sprites.add(zombie8)
 running = True
 clock = pygame.time.Clock()
 
+text = f"score: {hit} miss: {miss}"
 while running:
     # quit event
     for event in pygame.event.get():
@@ -106,6 +117,13 @@ while running:
         if event.type == MOUSEBUTTONDOWN:
             if event.button == 1:
                 hammer_img = hammer[1]
+                clicked_sprites = [sprite for sprite in all_sprites if sprite.rect.collidepoint(event.pos)]
+                if not clicked_sprites:
+                    miss +=1
+                else:
+                    for sprite in clicked_sprites:
+                        sprite.get_clicked()
+                        hit += 1
         if event.type == MOUSEBUTTONUP:
             if event.button == 1:
                 hammer_img = hammer[0]
@@ -113,14 +131,19 @@ while running:
         mouse_pos = pygame.mouse.get_pos()
         hammer_rect.center = (mouse_pos[0], mouse_pos[1])
     # if pygame.time.get_ticks() % 1500 == 0:
-
+    text = f"score: {hit} miss: {miss}"
     screen.blit(background_image, (0, 0))
     screen.blit(hammer_img, hammer_rect)
-    
+    text_surface = font.render(text, True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.x = 10
+    text_rect.y = 10
+    screen.blit(text_surface, text_rect)
     all_sprites.update()
 
 
     all_sprites.draw(screen)
     pygame.display.flip()
     clock.tick(60)
+print(hit)
 pygame.quit()
