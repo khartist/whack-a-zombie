@@ -133,7 +133,6 @@ while running:
     # if pygame.time.get_ticks() % 1500 == 0:
     text = f"score: {hit} miss: {miss}"
     screen.blit(background_image, (0, 0))
-    screen.blit(hammer_img, hammer_rect)
     text_surface = font.render(text, True, BLACK)
     text_rect = text_surface.get_rect()
     text_rect.x = 10
@@ -143,6 +142,8 @@ while running:
 
 
     all_sprites.draw(screen)
+    screen.blit(hammer_img, hammer_rect)
+
     pygame.display.flip()
     clock.tick(60)
 print(hit)
