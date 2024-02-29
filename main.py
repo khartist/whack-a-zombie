@@ -47,11 +47,12 @@ font = pygame.font.Font(None, FONT_SIZE)
 bgm_channel = pygame.mixer.Channel(0)
 hammer_click_channel = pygame.mixer.Channel(1)
 hammer_hit_channel = pygame.mixer.Channel(2)
+bgm_channel.set_volume(0.3)  # Adjust volume to 50%
 
 bgm_channel.play(bgm ,loops = -1)
-pygame.mixer.music.set_volume(0.5)  # Adjust volume to 50%
 
-
+hammer_click_channel.set_volume(0.85)
+hammer_hit_channel.set_volume(1)
 
 background_image = pygame.image.load("img/bg.png").convert_alpha()
 background_image = pygame.transform.scale(background_image, [SCREEN_WIDTH, SCREEN_HEIGHT])
@@ -158,7 +159,7 @@ clock = pygame.time.Clock()
 gameTimer = 60000
 
 text = f"score: {hit} miss: {miss} time: {pygame.time.get_ticks()}"
-while pygame.time.get_ticks() < gameTimer:
+while pygame.time.get_ticks() <= gameTimer:
     # quit event
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -197,6 +198,5 @@ while pygame.time.get_ticks() < gameTimer:
 
     pygame.display.flip()
     clock.tick(60)
-print(hit)
 pygame.mixer.music.stop()
 pygame.quit()
