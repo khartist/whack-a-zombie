@@ -104,7 +104,7 @@ class Zombie(pygame.sprite.Sprite):
         #if current_time - self.get_hit >= self.delay:
             #self.rect.x = -1000
         self.last_appear_time = current_time
-        self.appear_time = random.randint(1000, 4000)
+        #
      #   self.disappear_time = random.randint(1000, 1500)
            # self.image = fi_img
 
@@ -127,6 +127,7 @@ class Zombie(pygame.sprite.Sprite):
                 self.rect.x = self.init_x
                 self.rect.y = self.init_y
                 self.last_appear_time = current_time
+                self.appear_time = random.randint(1000, 4000)
         '''else:
             # Make sprite appear
             self.rect.x = self.init_x  # Reset sprite position'''
@@ -154,12 +155,14 @@ all_sprites.add(zombie8)
 running = True
 clock = pygame.time.Clock()
 
-text = f"score: {hit} miss: {miss}"
-while running:
+gameTimer = 60000
+
+text = f"score: {hit} miss: {miss} time: {pygame.time.get_ticks()}"
+while pygame.time.get_ticks() < gameTimer:
     # quit event
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            pygame.quit()
         if event.type == MOUSEBUTTONDOWN:
             hammer_click_channel.play(hammer_click, loops=0)
             if event.button == 1:
@@ -179,7 +182,7 @@ while running:
         mouse_pos = pygame.mouse.get_pos()
         hammer_rect.center = (mouse_pos[0], mouse_pos[1])
     # if pygame.time.get_ticks() % 1500 == 0:
-    text = f"score: {hit} miss: {miss}"
+    text = f"score: {hit} miss: {miss} time: {int(pygame.time.get_ticks()/1000)}"
     screen.blit(background_image, (0, 0))
     text_surface = font.render(text, True, BLACK)
     text_rect = text_surface.get_rect()
